@@ -16,6 +16,7 @@ const typeDefs = gql`
         mascot: String
         cleaning_duty: String
         project: String
+        supplies: [Supplies]
     }
     type Equipments {
       id: String
@@ -30,7 +31,14 @@ const typeDefs = gql`
 `
 const resolvers = {
   Query: {
-    teams: () => database.teams,
+    teams: () => database.teams
+      .map((team) => {
+          team.supplies = database.supplies
+          .filter((supply) => {
+              return supply.team === team.id
+          })
+          return team
+      }),
     team: (parent, args, context, info) => database.teams
       .filter(team => {
         return team.id === args.id
