@@ -4,6 +4,7 @@ const { ApolloServer, gql } = require('apollo-server')
 const typeDefs = gql`
     type Query {
         teams: [Team]
+        team(id: Int): Team
         equipments: [Equipments]
         supplies: [Supplies]
     }
@@ -30,6 +31,10 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     teams: () => database.teams,
+    team: (parent, args, context, info) => database.teams
+      .filter(team => {
+        return team.id === args.id
+      })[0],
     equipments: () => database.equipments,
     supplies: () => database.supplies
   }
