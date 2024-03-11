@@ -55,6 +55,21 @@ const EDIT_TEAM = gql`
   }
 `
 
+// ...
+const POST_TEAM = gql`
+  mutation PostTeam($input: PostTeamInput!) {
+    postTeam(input: $input) {
+      id
+      manager
+      office
+      extension_number
+      mascot
+      cleaning_duty
+      project
+    }
+  }
+`
+
 let refetchTeams;
 
 function Teams() {
@@ -89,6 +104,21 @@ function Teams() {
     console.log(data.editTeam)
     alert(`${data.editTeam.id} 항목이 수정되었습니다.`)
     refetchTeams()
+    }
+
+    function execPostTeam () {
+        postTeam({
+        variables: { input: inputs }})
+    }
+
+    const [postTeam] = useMutation(
+        POST_TEAM, { onCompleted: postTeamCompleted }) 
+        
+    function postTeamCompleted (data) {
+        console.log(data.postTeam)
+        alert(`${data.postTeam.id} 항목이 생성되었습니다.`)
+        refetchTeams()
+        setContentId(0)
     }
 
     const [contentId, setContentId] = useState(0)
@@ -215,7 +245,7 @@ function Teams() {
                 </table>
                 {contentId === 0 ? 
                 (<div className="buttons">
-                    <button onClick={() => {}}>Submit</button>
+                    <button onClick={() => {execPostTeam()}}>Submit</button>
                 </div>
                 ) : (
                 <div className="buttons">
